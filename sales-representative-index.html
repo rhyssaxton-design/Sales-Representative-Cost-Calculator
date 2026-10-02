@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Representative Cost of Vacancy Calculator</title>
+  <style>
+    :root{
+      --zip-green:#45DB61;
+      --zip-gravitas:#002325;
+      --zip-cream:#ECEBE6;
+      --white:#FFFFFF;
+      --muted:#5E6D6E;
+      --panel:#F7FAF8;
+      --border:#D7E1DC;
+      --soft-green:#EAFBEF;
+      --shadow:0 18px 45px rgba(0,35,37,.10);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:var(--zip-cream);
+      color:var(--zip-gravitas);
+    }
+
+    .page{
+      max-width:1180px;
+      margin:0 auto;
+      padding:32px 20px 48px;
+    }
+
+    .hero{
+      background:var(--zip-gravitas);
+      color:white;
+      border-radius:24px;
+      padding:30px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero:after{
+      content:"";
+      position:absolute;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background:var(--zip-green);
+      opacity:.12;
+      right:-70px;
+      top:-70px;
+    }
+
+    .brand-lockup{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:16px;
+      font-weight:800;
+      letter-spacing:.01em;
+    }
+
+    .brand-mark{
+      width:18px;
+      height:18px;
+      border-radius:4px;
+      background:var(--zip-green);
+      box-shadow:8px 0 0 rgba(69,219,97,.45), 0 8px 0 rgba(69,219,97,.45);
+    }
+
+    .role-kicker{
+      display:inline-block;
+      margin:4px 0 12px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:var(--zip-green);
+      color:var(--zip-gravitas);
+      font-size:.82rem;
+      font-weight:900;
+      letter-spacing:.09em;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,4vw,3.5rem);
+      line-height:1.05;
+      letter-spacing:-.04em;
+      max-width:760px;
+    }
+
+    .hero p{
+      margin:14px 0 0;
+      color:#CFE0DB;
+      max-width:760px;
+      font-size:1rem;
+      line-height:1.6;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:22px;
+      margin-top:24px;
+    }
+
+    .card{
+      background:var(--white);
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:24px;
+      box-shadow:0 8px 28px rgba(0,35,37,.06);
+    }
+
+    .card h2{
+      margin:0 0 6px;
+      font-size:1.2rem;
+      letter-spacing:-.02em;
+    }
+
+    .sub{
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.5;
+      margin-bottom:20px;
+    }
+
+    .field{
+      margin-bottom:16px;
+    }
+
+    label{
+      display:block;
+      font-size:.88rem;
+      font-weight:700;
+      margin-bottom:7px;
+    }
+
+    input, select{
+      width:100%;
+      padding:13px 14px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      font-size:16px;
+      color:var(--zip-gravitas);
+      background:#fff;
+      outline:none;
+      transition:.15s ease;
+    }
+
+    input:focus, select:focus{
+      border-color:var(--zip-green);
+      box-shadow:0 0 0 4px rgba(69,219,97,.16);
+    }
+
+    .money-wrap{
+      position:relative;
+    }
+
+    .money-wrap span{
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .money-wrap input{
+      padding-left:30px;
+    }
+
+    .metrics{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+
+    .metric{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .metric .label{
+      font-size:.82rem;
+      color:var(--muted);
+      margin-bottom:7px;
+    }
+
+    .metric .value{
+      font-size:1.7rem;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+
+    .hero-metric{
+      margin-top:14px;
+      background:var(--zip-gravitas);
+      color:white;
+      border-radius:18px;
+      padding:22px;
+      border:2px solid var(--zip-green);
+    }
+
+    .hero-metric .label{
+      color:#CFE0DB;
+      font-size:.85rem;
+      margin-bottom:8px;
+    }
+
+    .hero-metric .value{
+      font-size:clamp(2rem,4vw,3rem);
+      font-weight:900;
+      letter-spacing:-.04em;
+      color:var(--zip-green);
+    }
+
+    .section{
+      margin-top:24px;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:14px;
+    }
+
+    .section-title h2{
+      margin:0;
+      font-size:1.25rem;
+    }
+
+    .daily{
+      color:var(--muted);
+      font-size:.9rem;
+    }
+
+    .daily strong{color:var(--zip-gravitas)}
+
+    .savings-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .saving{
+      background:var(--soft-green);
+      border:1px solid #BDECC8;
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .saving .days{
+      font-size:.82rem;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    .saving .amount{
+      font-size:1.65rem;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+
+    .whatif{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+      align-items:end;
+      margin-top:16px;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:20px;
+    }
+
+    .whatif-result{
+      background:var(--zip-gravitas);
+      color:white;
+      border-radius:14px;
+      padding:18px;
+    }
+
+    .whatif-result .small{
+      color:#CFE0DB;
+      font-size:.82rem;
+      margin-bottom:5px;
+    }
+
+    .whatif-result .big{
+      font-size:2rem;
+      font-weight:900;
+      color:var(--zip-green);
+      letter-spacing:-.03em;
+    }
+
+    .talk{
+      background:var(--zip-gravitas);
+      color:white;
+      border-radius:22px;
+      padding:24px;
+    }
+
+    .talk h3{
+      margin:0 0 10px;
+      color:var(--zip-green);
+    }
+
+    .talk p{
+      margin:0;
+      color:#D9E7E3;
+      line-height:1.7;
+    }
+
+    .disclaimer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:.78rem;
+      line-height:1.5;
+    }
+
+    .footer{
+      margin-top:28px;
+      text-align:center;
+      color:var(--muted);
+      font-size:.8rem;
+    }
+
+    @media (max-width: 800px){
+      .grid,
+      .whatif{
+        grid-template-columns:1fr;
+      }
+      .savings-grid,
+      .metrics{
+        grid-template-columns:1fr;
+      }
+      .section-title{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="brand-lockup">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span>ZipRecruiter</span>
+      </div>
+      <div class="role-kicker">SALES REPRESENTATIVE</div>
+      <h1>Cost of Vacancy Calculator</h1>
+      <p>Estimate the revenue impact of leaving a sales representative position unfilled and see the value of filling it sooner.</p>
+    </section>
+
+    <section class="grid">
+      <div class="card">
+        <h2>Sales Vacancy Details</h2>
+        <div class="sub">Enter your sales performance assumptions below. Results update instantly.</div>
+
+        <div class="field">
+          <label for="quotaAmount">Quota amount</label>
+          <div class="money-wrap">
+            <span>$</span>
+            <input id="quotaAmount" type="number" min="0" step="1000" value="100000" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="quotaPeriod">Quota period</label>
+          <select id="quotaPeriod">
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="annual">Annual</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="daysOpen">Days position has already been open</label>
+          <input id="daysOpen" type="number" min="0" step="1" value="30" />
+        </div>
+
+        <div class="field" style="margin-bottom:0">
+          <label for="daysRemaining">Estimated additional days to fill</label>
+          <input id="daysRemaining" type="number" min="0" step="1" value="30" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Vacancy Impact</h2>
+        <div class="sub">Quota is normalized to an annual, weekly, and daily revenue target before vacancy impact is calculated.</div>
+
+        <div class="metrics">
+          <div class="metric">
+            <div class="label">Annualized Quota</div>
+            <div class="value" id="annualQuota">$1,200,000</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Weekly Revenue Target</div>
+            <div class="value" id="weeklyValue">$23,077</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Vacancy Impact So Far</div>
+            <div class="value" id="costSoFar">$98,630</div>
+          </div>
+
+          <div class="metric">
+            <div class="label">Additional Impact if Position Remains Open</div>
+            <div class="value" id="futureCost">$98,630</div>
+          </div>
+        </div>
+
+        <div class="hero-metric" aria-live="polite">
+          <div class="label">Total Estimated Vacancy Impact</div>
+          <div class="value" id="totalCost">$197,260</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section card">
+      <div class="section-title">
+        <div>
+          <h2>Value of Filling the Position Sooner</h2>
+          <div class="sub" style="margin:4px 0 0">See how much revenue capacity could potentially be preserved by shortening time-to-fill.</div>
+        </div>
+        <div class="daily">Daily revenue target: <strong id="dailyValueSmall">$3,288</strong></div>
+      </div>
+
+      <div class="savings-grid" id="presetSavings"></div>
+
+      <div class="whatif">
+        <div>
+          <label for="customDays">What if this sales position were filled sooner?</label>
+          <input id="customDays" type="number" min="0" step="1" value="14" />
+          <div class="sub" style="margin:8px 0 0">Enter the number of days sooner you want to model.</div>
+        </div>
+
+        <div class="whatif-result" aria-live="polite">
+          <div class="small">Potential Revenue Capacity Preserved</div>
+          <div class="big" id="customSavings">$46,027</div>
+          <div class="small" id="customNote" style="margin-top:8px"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section talk">
+      <h3>What the Numbers Mean</h3>
+      <p id="talkTrack"></p>
+    </section>
+
+    <div class="disclaimer">
+      For illustration only. Results are estimates based on user-provided quota assumptions and assume revenue target accrues evenly over time. Results should not be presented as guaranteed lost revenue, profit, or savings.
+    </div>
+
+    <div class="footer">Sales Representative Cost of Vacancy Calculator</div>
+  </main>
+
+  <script>
+    (() => {
+      const $ = (id) => document.getElementById(id);
+      const quotaAmount = $('quotaAmount');
+      const quotaPeriod = $('quotaPeriod');
+      const daysOpen = $('daysOpen');
+      const daysRemaining = $('daysRemaining');
+      const customDays = $('customDays');
+
+      const money = (n) => new Intl.NumberFormat('en-US', {
+        style:'currency',
+        currency:'USD',
+        maximumFractionDigits:0
+      }).format(Number.isFinite(n) ? n : 0);
+
+      const safe = (input) => {
+        const n = Number(input.value);
+        return Number.isFinite(n) && n > 0 ? n : 0;
+      };
+
+      function annualizedQuota(amount, period){
+        if(period === 'monthly') return amount * 12;
+        if(period === 'quarterly') return amount * 4;
+        return amount;
+      }
+
+      function render() {
+        const q = safe(quotaAmount);
+        const period = quotaPeriod.value;
+        const a = safe(daysOpen);
+        const b = safe(daysRemaining);
+
+        const annual = annualizedQuota(q, period);
+        const weekly = annual / 52;
+        const daily = annual / 365;
+        const past = daily * a;
+        const future = daily * b;
+        const total = past + future;
+
+        $('annualQuota').textContent = money(annual);
+        $('weeklyValue').textContent = money(weekly);
+        $('dailyValueSmall').textContent = money(daily);
+        $('costSoFar').textContent = money(past);
+        $('futureCost').textContent = money(future);
+        $('totalCost').textContent = money(total);
+
+        const presets = [];
+        if (b > 0) {
+          [7,14].forEach(d => {
+            if (d < b) presets.push(d);
+          });
+          const last = Math.min(30, b);
+          if (!presets.includes(last)) presets.push(last);
+        }
+
+        const presetSavings = $('presetSavings');
+        presetSavings.innerHTML = '';
+
+        if (presets.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'sub';
+          empty.textContent = 'Enter estimated additional days to fill to see faster-fill scenarios.';
+          presetSavings.appendChild(empty);
+        } else {
+          presets.slice(0,3).forEach(d => {
+            const el = document.createElement('div');
+            el.className = 'saving';
+
+            const days = document.createElement('div');
+            days.className = 'days';
+            days.textContent = `Fill ${Math.round(d)} Days Sooner`;
+
+            const amount = document.createElement('div');
+            amount.className = 'amount';
+            amount.textContent = money(daily * d);
+
+            const note = document.createElement('div');
+            note.className = 'days';
+            note.style.marginTop = '6px';
+            note.textContent = 'Potential revenue capacity preserved';
+
+            el.append(days, amount, note);
+            presetSavings.appendChild(el);
+          });
+        }
+
+        customDays.max = String(Math.max(0, Math.floor(b)));
+        let requested = safe(customDays);
+        if (requested > b) {
+          requested = b;
+          customDays.value = String(Math.floor(b));
+        }
+
+        const saved = daily * requested;
+        $('customSavings').textContent = money(saved);
+        $('customNote').textContent = requested > 0
+          ? `Filling this position ${Math.round(requested)} days sooner could preserve approximately ${money(saved)} in quota-based revenue capacity.`
+          : 'Enter a number of days to estimate the value of shortening the vacancy.';
+
+        const periodLabel = period === 'monthly' ? 'monthly' : period === 'quarterly' ? 'quarterly' : 'annual';
+
+        $('talkTrack').textContent =
+          `At a ${periodLabel} quota of ${money(q)}, this sales representative carries an annualized revenue target of approximately ${money(annual)}. ` +
+          `That equates to about ${money(weekly)} per week, or ${money(daily)} per day, in quota-based revenue capacity. ` +
+          `Based on the number of days the position has already been open, the estimated vacancy impact to date is ${money(past)}. ` +
+          `If the position remains open another ${Math.round(b)} days, the additional estimated impact is ${money(future)}.` +
+          (requested > 0 ? ` Filling the position ${Math.round(requested)} days sooner could preserve approximately ${money(saved)} in revenue capacity.` : '');
+      }
+
+      [quotaAmount, quotaPeriod, daysOpen, daysRemaining, customDays].forEach(el => {
+        el.addEventListener('input', render);
+        el.addEventListener('change', render);
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
